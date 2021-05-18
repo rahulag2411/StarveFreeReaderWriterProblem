@@ -1,0 +1,52 @@
+// INTIALIZATION
+readCnt = Integer(0);           //An Integer variable for storing the number of reader executing critical section
+rd_mutex = Semaphore(1);        //Seamphore needed for changing the readCnt variable
+getAccess = Semaphore(1);       //Seamphore needed for accessing the critical section
+turn = Semaphore(1);            //Seamphore representing the order in which the reader and writer are requesting access to critical section
+
+
+// READER'S CODE 
+
+do{
+<ENTRY SECTION>
+       wait(turn);              //wait until it gets its turn to execute
+       wait(rd_mutex);          //while executing it first request access to increase readCnt
+       readCnt++;               //Increasing the readCnt variable
+       if(readCnt==1)           // if readCnt == 1 i.e. when the reader trying to execute is the first reader 
+         wait(getAccess);       //then it request access to the critical section for readers
+       signal(turn);            //releasing turn for the next reader or writer to take the token
+       signal(rd_mutex);        //Here,it releases the access to the readCnt
+
+<CRITICAL SECTION>
+       
+<EXIT SECTION>
+       wait(rd_mutex)           //Now again reader need to change readCnt variable       
+       readCnt--;               //decreasing readCnt by 1
+       if(readCnt==0)           //if readCnt == 0 i.e. all the readers have finished executing the code
+        signal(getAccess);      //then need to release the access to critical section 
+       signal(rd_mutex);        //Also need to release access to the readCnt  
+       
+<REMAINDER SECTION>
+       
+}while(true);
+
+// WRITER'S CODE
+do{
+<ENTRY SECTION>
+      wait(turn);                //wait until it gets its turn to execute
+      wait(getAccess);           //it request access to the critical section
+      signal(turn);              //releasing turn for the next reader or writer to take the token
+<CRITICAL SECTION>
+
+<EXIT SECTION>
+      signal(getAccess)          //need to release the access to critical section
+
+<REMAINDER SECTION>
+
+}while(true);
+
+
+
+
+
+
