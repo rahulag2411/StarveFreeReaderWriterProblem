@@ -36,3 +36,14 @@ First calling the **_turn_** Semaphore this checks If any process is already in 
 ### WRITER'S METHOD:  
 First checking the **_turn_** Semaphore and when it allows the writer get access by calling the semaphore **_getAccess_**.Now it releases the **_turn_** semaphore since order is preserved.Here it get access to CRITICAL SECTION and after executing it releases **_getAccess_** semaphore.
 
+## Explaination for the code to be starve-free
+
+### Mutual Exclusion:
+It is ensured by **_getAccess_** semaphore.It allows only one writer at a time to modify the resource or we can say access the CRITICAL SECTION,hence mutual exclusion between them.And also  the first reader needs the **_getAccess_** mutex lock to access the critical section.Hence this ensures mutual exclusion between readers and writers.
+
+### Bounded Waiting:
+For the code to be starve free it needs to be made sure that every process would wait only for a finite amount of time.As we know before executing the code,whether it is reader or writer,it needs **_turn_** semaphore,which uses queue for the blockes processes.And since queue uses FIFO policy,it ensures every process would wait for finite amount of time to get it's turn.
+
+### Progress Requirement:
+The code also needs to make sure that progress is happening.Since there are no cases for deadlock and also both the readers and writers take finite amount of time executing the critical section.Also after executing it releases the semaphores and hence make sure that progress is occuring.
+
