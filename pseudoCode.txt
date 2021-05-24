@@ -9,18 +9,18 @@ turn = Semaphore(1);            //Seamphore representing the order in which the 
 
 do{
 <ENTRY SECTION>
-       wait(turn);              //wait until it gets its turn to execute
-       wait(rd_mutex);          //while executing it first request access to increase readCnt
+       wait(turn,*PID);              //wait until it gets its turn to execute
+       wait(rd_mutex,*PID);          //while executing it first request access to increase readCnt
        readCnt++;               //Increasing the readCnt variable
        if(readCnt==1)           // if readCnt == 1 i.e. when the reader trying to execute is the first reader 
-         wait(getAccess);       //then it request access to the critical section for readers
+         wait(getAccess,*PID);       //then it request access to the critical section for readers
        signal(turn);            //releasing turn for the next reader or writer to take the token
        signal(rd_mutex);        //Here,it releases the access to the readCnt
 
 <CRITICAL SECTION>
        
 <EXIT SECTION>
-       wait(rd_mutex)           //Now again reader need to change readCnt variable       
+       wait(rd_mutex,*PID)           //Now again reader need to change readCnt variable       
        readCnt--;               //decreasing readCnt by 1
        if(readCnt==0)           //if readCnt == 0 i.e. all the readers have finished executing the code
         signal(getAccess);      //then need to release the access to critical section 
@@ -33,8 +33,8 @@ do{
 // WRITER'S CODE
 do{
 <ENTRY SECTION>
-      wait(turn);                //wait until it gets its turn to execute
-      wait(getAccess);           //it request access to the critical section
+      wait(turn,*PID);                //wait until it gets its turn to execute
+      wait(getAccess,*PID);           //it request access to the critical section
       signal(turn);              //releasing turn for the next reader or writer to take the token
 <CRITICAL SECTION>
 
